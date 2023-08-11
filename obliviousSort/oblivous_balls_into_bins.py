@@ -9,7 +9,7 @@ def isBitOn(number, bit_num):
 def keyToPseudoRandomNumber(config:Config, key,limit=-1):
         if len(key) % Config.KEY_SIZE != 0:
             key += b'\x00'*(Config.KEY_SIZE - len(key) % Config.KEY_SIZE)
-        enc = key #config.CIPHER.encrypt(key)
+        enc = config.CIPHER.encrypt(key)
         if limit == -1:
             return int.from_bytes(enc, 'big', signed=False)
         return int.from_bytes(enc, 'big', signed=False) % limit
