@@ -2,7 +2,6 @@ from Cryptodome.Cipher import AES
 class Config:
     # Block structure: KEY || DATA
     KEY_SIZE = 16
-    count = 0
     BLOCK_SIZE = 32
     LOCAL_MEMORY_SIZE = 120
     BIN_SIZE = int(LOCAL_MEMORY_SIZE/2)
