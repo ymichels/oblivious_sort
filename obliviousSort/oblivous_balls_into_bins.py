@@ -9,7 +9,7 @@ def isBitOn(number, bit_num):
 def keyToPseudoRandomNumber(config:Config, key,limit=-1):
         if len(key) % Config.KEY_SIZE != 0:
             key += b'\x00'*(Config.KEY_SIZE - len(key) % Config.KEY_SIZE)
-        enc = config.CIPHER.encrypt(key)
+        enc = key #config.CIPHER.encrypt(key)
         if limit == -1:
             return int.from_bytes(enc, 'big', signed=False)
         return int.from_bytes(enc, 'big', signed=False) % limit
@@ -43,13 +43,13 @@ def obliviousBallsIntoBins(config:Config, array:RAM):
     for bit_num in range(1,math.ceil(math.log(current_ram.getSize()/config.BIN_SIZE,2))):
         first_bin_index = 0
         for bin_index in range(math.ceil((current_ram.getSize()/config.BIN_SIZE)/2)):
-            first_bin = current_ram.readChunks([(first_bin_index*config.BIN_SIZE, (first_bin_index + 1)*config.BIN_SIZE)])
-            second_bin = current_ram.readChunks([
-                ((first_bin_index + 2**bit_num)*config.BIN_SIZE, (first_bin_index + (2**bit_num) + 1)*config.BIN_SIZE)])
+            first_bin = current_ram.readChunk((first_bin_index*config.BIN_SIZE, (first_bin_index + 1)*config.BIN_SIZE))
+            second_bin = current_ram.readChunk(
+                ((first_bin_index + 2**bit_num)*config.BIN_SIZE, (first_bin_index + (2**bit_num) + 1)*config.BIN_SIZE))
             bin_zero, bin_one = splitToBinsByBit(config, first_bin + second_bin, math.ceil(math.log(current_ram.getSize()/config.BIN_SIZE,2)) - 1 - bit_num, math.ceil(current_ram.getSize()/config.BIN_SIZE))
             
-            next_ram.writeChunks(
-                [(bin_index*2*config.BIN_SIZE, (bin_index +1)*2*config.BIN_SIZE)], bin_zero + bin_one)
+            next_ram.writeChunk(
+                (bin_index*2*config.BIN_SIZE, (bin_index +1)*2*config.BIN_SIZE), bin_zero + bin_one)
             first_bin_index +=1
             if first_bin_index % 2**bit_num == 0:
                 first_bin_index += 2**bit_num
@@ -62,9 +62,9 @@ def _obliviousBallsIntoBinsFirstIteration(config:Config, array:RAM)->RAM:
 
     current_read_pos = 0
     for bin_index in range(math.ceil(array.getSize()/config.BIN_SIZE)):
-        balls = array.readChunks([(current_read_pos, current_read_pos + config.BIN_SIZE)])
+        balls = array.readChunk((current_read_pos, current_read_pos + config.BIN_SIZE))
         bin_zero, bin_one = splitToBinsByBit(config, balls, math.ceil(math.log(math.ceil(second_array.getSize()/config.BIN_SIZE),2))-1, math.ceil(second_array.getSize()/config.BIN_SIZE))
-        second_array.writeChunks(
-            [(2*current_read_pos, 2*current_read_pos + 2*config.BIN_SIZE)], bin_zero + bin_one)
+        second_array.writeChunk(
+            (2*current_read_pos, 2*current_read_pos + 2*config.BIN_SIZE), bin_zero + bin_one)
         current_read_pos += config.BIN_SIZE
     return second_array
