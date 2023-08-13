@@ -26,12 +26,6 @@ def split_to_bins_by_bit(config:Config, blocks, bit_num, number_of_bins):
             bin_one.append(block)
         else:
             bin_zero.append(block)
-    if config.BIN_SIZE - len(bin_zero) < 0:
-        print('happened')
-        config.count += len(bin_zero) - config.BIN_SIZE
-    if config.BIN_SIZE - len(bin_one) < 0:
-        print('happened')
-        config.count += len(bin_one) - config.BIN_SIZE
     bin_one.extend([RAM.dummey_note] * (config.BIN_SIZE - len(bin_one)))
     bin_zero.extend([RAM.dummey_note] * (config.BIN_SIZE - len(bin_zero)))
     return bin_zero, bin_one
