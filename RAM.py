@@ -5,17 +5,15 @@ class RAM:
     def __init__(self, size) -> None:
         self.memory = [self.dummey_note] * size
     
-    def getSize(self):
+    def get_size(self):
         return len(self.memory)
     
-    def readChunk(self, chunk):
+    def read_chunk(self, chunk):
         start, end = chunk
-        balls_num = int((end-start))
         return self.memory[int(start):int(end)]
     
-    def writeChunk(self, chunk, balls):
-        start, end = chunk
-        balls_num = int((end-start))
+    def write_chunk(self, chunk, balls):
+        start, _ = chunk
         ball_start = int(start)
         if ball_start >= len(self.memory):
             self.memory.extend(balls)
